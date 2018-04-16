@@ -30,7 +30,7 @@ def seq2seqmodel(num_encoder_tokens, num_decoder_tokens,wordToInt, encoder_input
         # Set up the decoder, using `encoder_states` as initial state.
         decoder_inputs = Input(shape=(None, num_decoder_tokens))
         decoder_lstm_layer = LSTM(latent_dim, return_sequences=True)(decoder_inputs, initial_state=encoder_states)
-        decoder_dense = Dense(num_decoder_tokens, activation='sigmoid')
+        decoder_dense = Dense(num_decoder_tokens, activation='softmax')
         decoder_outputs = decoder_dense(decoder_lstm_layer)
         # Define the model that will turn
         # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`

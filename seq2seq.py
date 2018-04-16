@@ -61,17 +61,6 @@ def convertLabelData(df):
     df = m
     return df
 
-def isNotEmpty(s):
-    try:
-        return bool(s["Post"] and s["Post"].strip())
-    except:
-        False
-
-train_data["Post_empty"] = train_data.apply(isNotEmpty, axis=1)
-train_data = train_data[train_data["Post_empty"] == True]
-
-test_data["Post_empty"] = test_data.apply(isNotEmpty, axis=1)
-test_data = test_data[test_data["Post_empty"] == True]
 train_post = train_data["Post"].tolist()
 
 train_data["Frames"] = train_data["Frames"].apply(encodeLabelData)
@@ -92,7 +81,7 @@ for post in train_post:
 
 num_encoder_tokens = count + 1
 max_encoder_seq_length = max([len(txt.split()) for txt in train_post])
-num_decoder_tokens = 14
+num_decoder_tokens = 13
 max_decoder_seq_length = max([len(x) for x in frames])
 
 
@@ -111,7 +100,7 @@ for i, (inp, out) in enumerate(zip(train_post, frames)):
             # decoder_target_data will be ahead by one timestep
             # and will not include the start character.
             decoder_target_data[i, t - 1, char] = 1.
-
+print(decoder_input_data.shape)
 model, encoder_model, decoder_model = seq2seqmodel(num_encoder_tokens, num_decoder_tokens,wordToInt,encoder_input_data,decoder_input_data,
                                                    decoder_target_data)
 
@@ -130,18 +119,21 @@ def decode_sequence(input_seq):
     # (to simplify, here we assume a batch of size 1).
     stop_condition = False
     decoded_sentence = ''
+    count = 0
     while not stop_condition:
         output_tokens, h, c = decoder_model.predict(
             [target_seq] + states_value)
         # Sample a token
+
         sampled_token_index = np.argmax(output_tokens[0, -1, :])
         sampled_char = reverse_target_characters[sampled_token_index]
         decoded_sentence += sampled_char + ","
         # Exit condition: either hit max length
         # or find stop character.
-        if sampled_char == '\n':
-            stop_condition = True
 
+        if sampled_char == '\n' or len(decoded_sentence) > 300:
+            print(output_tokens)
+            stop_condition = True
         # Update the target sequence (of length 1).
         target_seq = np.zeros((1, 1, num_decoder_tokens))
         target_seq[0, 0, sampled_token_index] = 1.
@@ -167,16 +159,11 @@ for seq_index in range(len(test_post_list)):
     print(test_post_list[seq_index])
     truth = groundtruth[seq_index]
     print("Ground truth ",truth)
-    decoded_sentence = decode_sequence(input_seq)
+    decoded_sentence = decode_sequence([input_seq])
     d = list(decoded_sentence.split(","))
     decoded_sentence = ",".join(list(set(d)))
     decoded_sentence = "".join(decoded_sentence.split("\t"))
     output.append(decoded_sentence)
     print("decoded sentence ",decoded_sentence)
-
-
-print("results")
-
-#print(classification_report(output,groundtruth))
 
 evaluateModel(output,groundtruth)

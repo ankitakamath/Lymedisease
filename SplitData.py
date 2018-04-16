@@ -20,12 +20,13 @@ def removeStopWords(df):
     return df
 
 def cleanData():
-    columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "progress", "failure", "insurance",
-               "diet", "exercise", "ask_for_advice", "other"]
+    #
+    columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "progress",
+               "failure", "insurance",  "diet", "exercise", "ask_for_advice", "other"]
     characters_to_remove = ['.','(',')',',','•',':','[',']','\\/','!','?','\\"','-','~','|','0','1','2','3','4','5','6','7',
                             '8','9','&','*','+',';','>','`']
 
-    df = pd.read_csv("Data/temp.csv", delimiter="^")
+    df = pd.read_csv("Data/dataset.csv", delimiter="^")
     col = list(df.columns.values)
     frames = []
     for index,row in df.iterrows():
@@ -35,14 +36,15 @@ def cleanData():
                 z.append(columns[i])
         frames.append(','.join(z))
     df["Frames"] = frames
-    # df["Post"] = df["Post"].apply(lambda m :''.join([c for c in m if c not in characters_to_remove]))
+    df = df[df["Frames"] != ""]
+    df["Post"] = df["Post"].apply(lambda m :''.join([c for c in m if c not in characters_to_remove]))
     # df["Post"] = df["Post"].apply(removeStopWords)
+    df = df[df["Post"] != ""]
     return df
 
 def splitData():
     df = cleanData()
-    df = df[df["Post"].map(len) < 5000]
-    print(df["Post"])
+    df = df[df["Post"].map(len) < 1000]
     train_data,test_data = train_test_split(df,test_size = 0.2)
 
     train_data.to_csv("Data/train_dataset.csv",sep="^")

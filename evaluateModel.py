@@ -7,64 +7,85 @@ def calculateMetrics(output,groundtruth,label):
         for i  in output:
             j = i.split(",")
             y  = x.split(",")
-            if label in y and label in output:
+
+            if label in y and label in j:
                 true_positives += 1
-            if label in y and label not in output:
+            if label in y and label not in j:
                 false_negatives += 1
-            if label in output and label not in y:
+            if label in j and label not in y:
                 false_positives += 1
-            if label not in output and label not in y:
+            if label not in j and label not in y:
                 true_negatives += 1
 
     return true_positives,true_negatives,false_positives,false_negatives
 
-# , "medical_test", "medication", "progress", "failure", "insurance",
-#                "diet", "exercise", "ask_for_advice", "other"
+
+def displayMetrics(tp, tn, fp, fn):
+    tpr  = 0
+    fpr = 0
+    precision = 0
+    recall = 0
+    if tp + fn  is not 0:
+        tpr = tp / (tp + fn)
+        recall = tp / (tp + fn)
+    if fp + tn is not 0:
+        fpr = fp / (fp + tn)
+    if tp + fp is not 0:
+        precision = tp / (tp + fp)
+
+    accuracy = (tp + tn) / (tp + tn + fp + fn)
+    print("True positive rate: ", tpr)
+    print("False Postive rate: ", fpr)
+    print("Precision: ", precision)
+    print("Recall: ", recall)
+    print("Accuracy: ", accuracy)
+
+
 def evaluateModel(output,groundtruth):
     # for label seek
-    tp_seek,tn_seek,fp_seek,fn_seek = calculateMetrics(output,groundtruth,"Seek")
+    tp,tn,fp,fn = calculateMetrics(output,groundtruth,"Seek")
+    print("Metrics for Seek Frame")
+    displayMetrics(tp,tn,fp,fn)
 
-    tpr_seek = tp_seek / (tp_seek + fn_seek)
-    fpr_seek = fp_seek / (fp_seek + tn_seek)
-    precision_seek = tp_seek / (tp_seek + fp_seek)
-    recall_seek = tp_seek / (tp_seek + fn_seek)
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "medical_condition")
+    print("Metrics for medical_condition Frame")
+    displayMetrics(tp, tn, fp, fn)
 
-    print("Metrics Report for Seek Frame")
-    print("True positive rate: ",tpr_seek)
-    print("False Postive rate: ",fpr_seek)
-    print("Precision: ", precision_seek)
-    print("Recall: ",recall_seek)
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "medical_test")
+    print("Metrics for medical_test Frame")
+    displayMetrics(tp, tn, fp, fn)
 
-    # for label "medical_condition"
-    tp_med_con, tn_med_con, fp_med_con, fn_med_con = calculateMetrics(output, groundtruth, "medical_condition")
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "medication")
+    print("Metrics for medication Frame")
+    displayMetrics(tp, tn, fp, fn)
 
-    tpr_med_con = tp_med_con / (tp_med_con + fn_med_con)
-    fpr_med_con = fp_med_con / (fp_med_con + tn_med_con)
-    precision_med_con = tp_med_con / (tp_med_con + fp_med_con)
-    recall_med_con = tp_med_con / (tp_med_con + fn_med_con)
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "progress")
+    print("Metrics for progress Frame")
+    displayMetrics(tp, tn, fp, fn)
 
-    print("Metrics Report for Seek Frame")
-    print("True positive rate: ", tpr_med_con)
-    print("False Postive rate: ", fpr_med_con)
-    print("Precision: ", precision_med_con)
-    print("Recall: ", recall_med_con)
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "failure")
+    print("Metrics for failure Frame")
+    displayMetrics(tp, tn, fp, fn)
 
-    # # for label seek
-    # tp_seek, tn_seek, fp_seek, fn_seek = calculateMetrics(output, groundtruth, "Seek")
-    #
-    # tpr_seek = tp_seek / (tp_seek + fn_seek)
-    # fpr_seek = fp_seek / (fp_seek + tn_seek)
-    #
-    # # for label seek
-    # tp_seek, tn_seek, fp_seek, fn_seek = calculateMetrics(output, groundtruth, "Seek")
-    #
-    # tpr_seek = tp_seek / (tp_seek + fn_seek)
-    # fpr_seek = fp_seek / (fp_seek + tn_seek)
-    #
-    # # for label seek
-    # tp_seek, tn_seek, fp_seek, fn_seek = calculateMetrics(output, groundtruth, "Seek")
-    #
-    # tpr_seek = tp_seek / (tp_seek + fn_seek)
-    # fpr_seek = fp_seek / (fp_seek + tn_seek)
-    #
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "insurance")
+    print("Metrics for insurance Frame")
+    displayMetrics(tp, tn, fp, fn)
+
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "diet")
+    print("Metrics for diet Frame")
+    displayMetrics(tp, tn, fp, fn)
+
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "exercise")
+    print("Metrics for exercise Frame")
+    displayMetrics(tp, tn, fp, fn)
+
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "ask_for_advice")
+    print("Metrics for ask_for_advice Frame")
+    displayMetrics(tp, tn, fp, fn)
+
+    tp, tn, fp, fn = calculateMetrics(output, groundtruth, "other")
+    print("Metrics for other Frame")
+    displayMetrics(tp, tn, fp, fn)
+
+
 
