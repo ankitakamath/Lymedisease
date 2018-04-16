@@ -131,7 +131,7 @@ def decode_sequence(input_seq):
         # Exit condition: either hit max length
         # or find stop character.
 
-        if sampled_char == '\n' or len(decoded_sentence) > 300:
+        if sampled_char == '\n' or len(decoded_sentence) > 200:
             print(output_tokens)
             stop_condition = True
         # Update the target sequence (of length 1).

@@ -10,7 +10,7 @@ def removeStopWords(df):
                  "at", "was", "is", "other", "even", "they","but", "myself", "be", "am", "an", "do", "not", "take",
                  "there", "are", "that","seems","to","which","ok","on","did","has","me","or","nt","you","are","in","a",
                  "he","oh","c","lol","l",'f',"just","many","out","way","after","your","seem","how","had","so","it's",
-                 "although","sure"]
+                 "although","sure","about","very","also","everything"]
     arr = df.split()
     st = ""
     for i in arr:
@@ -22,7 +22,8 @@ def removeStopWords(df):
 def cleanData():
     #
     columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "progress",
-               "failure", "insurance",  "diet", "exercise", "ask_for_advice", "other"]
+               "failure", "insurance",  "diet",
+               "exercise", "ask_for_advice", "other"]
     characters_to_remove = ['.','(',')',',','•',':','[',']','\\/','!','?','\\"','-','~','|','0','1','2','3','4','5','6','7',
                             '8','9','&','*','+',';','>','`']
 
