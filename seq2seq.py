@@ -18,10 +18,11 @@ sequences_matrix = sequence.pad_sequences(sequences, maxlen=max_len)
 test_sequences = tok.texts_to_sequences(X_test)
 test_sequences_matrix = sequence.pad_sequences(test_sequences, maxlen=max_len)
 
-encoder_model,decoder_model = encoder_decoder_model()
+encoder_model,decoder_model = encoder_decoder_model(sequences_matrix,Y_train)
 
 def decode_sequence(input_seq):
-    # Encode the input as state vectors.
+    # Encode the input as
+    #  state vectors.
     states_value = encoder_model.predict(input_seq)
 
     # Generate empty target sequence of length 1.
@@ -31,12 +32,12 @@ def decode_sequence(input_seq):
     print("Result")
     print(output_tokens[0][0])
 
+
+
 for seq_index in range(len(test_sequences_matrix)):
     # # Take one sequence (part of the training set)
     # # for trying out decoding.
     input_seq = test_sequences_matrix[seq_index: seq_index + 1]
     classes = decode_sequence(input_seq)
-
-
 
 
