@@ -16,7 +16,6 @@ The repository consists of 4 python files:
 
 **********************************************************************************************************************
 Steps to run the project:
-1. Change the path for glove dataset.
-2. Run python3 SplitData.py
-3. Run python3 seq2seq.py
+1. Run python3 SplitData.py
+2. Run python3 seq2seq.py
 
