@@ -12,7 +12,7 @@ from keras.callbacks import EarlyStopping
 
 columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "insurance",
            "diet", "exercise", "ask_for_advice", "other"]
-df = pd.read_csv("Data/dataset1.csv", delimiter="^")
+df = pd.read_csv("Data/dataset.csv", delimiter="^")
 
 df[["Seek","medical_condition", "medical_test", "medication", "insurance",
                 "diet","exercise", "ask_for_advice", "other"]] = df[["Seek","medical_condition", "medical_test", "medication", "insurance",
@@ -83,4 +83,3 @@ for i in range(len(Y_test)):
 
 accr = model.evaluate(test_sequences_matrix, Y_test)
 print('Test set\n  Loss: {:0.3f}\n  Accuracy: {:0.3f}'.format(accr[0], accr[1]))
-
