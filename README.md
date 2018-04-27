@@ -19,3 +19,5 @@ Steps to run the project:
 1. Run python3 SplitData.py
 2. Run python3 seq2seq.py
 
+**********************************************************************************************************************
+1. Run lyme_sequential.py
