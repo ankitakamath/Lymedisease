@@ -20,4 +20,4 @@ Steps to run the project:
 2. Run python3 seq2seq.py
 
 **********************************************************************************************************************
-1. Run lyme_sequential.py
+1. Run python3 lyme_sequential.py
