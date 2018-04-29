@@ -1,8 +1,8 @@
 def calculateMetrics(output,groundtruth,label):
-    true_positives = 0
-    true_negatives = 0
-    false_positives = 0
-    false_negatives = 0
+    true_positives = 0.0
+    true_negatives = 0.0
+    false_positives = 0.0
+    false_negatives = 0.0
     for x in groundtruth :
         for i  in output:
             for j in i:
@@ -20,18 +20,18 @@ def calculateMetrics(output,groundtruth,label):
 
 
 def displayMetrics(tp, tn, fp, fn):
-    precision = 0
-    recall = 0
-    if tp + fp is not 0:
+    precision = 0.0
+    recall = 0.0
+    f1 =0.0
+    if tp + fp != 0.0:
         precision = tp / (tp + fp)
-    if tp + fn is not  0:
+    if tp + fn != 0.0:
         recall = tp /(tp + fn)
-    accuracy = (tp + tn) / (tp + tn + fp + fn)
+    if (precision+recall) != 0.0:
+        f1 = (2*precision*recall)/(precision+recall)
 
-    f1 = (2*precision*recall)/(precision+recall)
     print("Precision: ", precision)
     print("Recall: ", recall)
-    print("Accuracy: ", accuracy)
     print("F1 score: ",f1)
 
 

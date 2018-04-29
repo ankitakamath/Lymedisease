@@ -33,7 +33,7 @@ def encoder_decoder_model(sequences_matrix,Y_train):
     # Note that `decoder_target_data` needs to be one-hot encoded,
     # rather than sequences of integers like `decoder_input_data`!
     history = model.fit([sequences_matrix, Y_train], Y_train,
-                    batch_size=10 , epochs=20,
+                    batch_size=5 , epochs=30,
                     validation_split=0.2, callbacks=[EarlyStopping(monitor='val_loss', min_delta=0.0001)])
 
     pyplot.plot(history.history['loss'])

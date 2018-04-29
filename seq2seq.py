@@ -31,13 +31,35 @@ def decode_sequence(input_seq):
             [target_seq] + states_value)
     print("Result")
     print(output_tokens[0][0])
+    classes = []
+    for i in range(9):
+        if output_tokens[0][0][i] >= 0.5:
+            classes.append(columns[i + 1])
+    return classes
 
 
+def getGroundTruth(test_labels):
+    groundtruth = []
+    for i in range(9):
+        if (test_labels[0][0][i] == 1):
+            groundtruth.append(columns[i + 1])
+    return groundtruth
+
+
+pred = []
+actual = []
 
 for seq_index in range(len(test_sequences_matrix)):
     # # Take one sequence (part of the training set)
     # # for trying out decoding.
     input_seq = test_sequences_matrix[seq_index: seq_index + 1]
     classes = decode_sequence(input_seq)
+    pred.append(classes)
+    print("actual values:" ,Y_test[seq_index:seq_index+1])
 
+    grndtruth = getGroundTruth(Y_test[seq_index:seq_index+1])
+    actual.append(grndtruth)
+
+
+evaluateModel(pred,actual)
 
