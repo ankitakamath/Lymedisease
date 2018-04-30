@@ -15,6 +15,8 @@ The repository consists of following python files:
 4. evaluateModel.py : This file contains the precision, recall and accuracy calculation for each frames.
 5. lyme_sequential : This file contains the implementation of lstm sequential model.
 
+
+The lyme_sequential.py and seq2seq.py calls the evaluateModel.py for evaluation.
 **********************************************************************************************************************
 Steps to run the entire project:
 
