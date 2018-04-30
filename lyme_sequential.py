@@ -9,6 +9,7 @@ from keras.optimizers import RMSprop, Adam
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing import sequence
 from keras.callbacks import EarlyStopping
+from evaluateModel import evaluateModel
 
 columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "insurance",
            "diet", "exercise", "ask_for_advice", "other"]
@@ -76,10 +77,27 @@ test_sequences_matrix = sequence.pad_sequences(test_sequences, maxlen=max_len)
 
 pred =  model.predict(test_sequences_matrix)
 output = []
-groundtruth = []
+actual = []
+
+def getGroundTruth(test_labels):
+    groundtruth = []
+    for i in range(9):
+        if (test_labels[i] == 1):
+            groundtruth.append(columns[i + 1])
+    return groundtruth
 
 for i in range(len(Y_test)):
     print(pred[i])
+    print(Y_test[i])
+    actual.append(getGroundTruth(Y_test[i]))
+    classes = []
+    for j in range(9):
+        if pred[i][j] >= 0.5:
+            classes.append(columns[j + 1])
+    output.append(classes)
+
+evaluateModel(output,actual)
+
 
 accr = model.evaluate(test_sequences_matrix, Y_test)
 print('Test set\n  Loss: {:0.3f}\n  Accuracy: {:0.3f}'.format(accr[0], accr[1]))
