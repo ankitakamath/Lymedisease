@@ -67,7 +67,9 @@ pyplot.title('model train vs validation loss')
 pyplot.ylabel('loss')
 pyplot.xlabel('epoch')
 pyplot.legend(['train', 'validation'], loc='upper right')
-pyplot.show()
+#pyplot.show()
+pyplot.savefig("validation_loss_seq2seq.pdf")
+pyplot.clf()
 
 
 test_sequences = tok.texts_to_sequences(X_test)

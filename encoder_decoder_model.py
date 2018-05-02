@@ -1,15 +1,16 @@
 from keras import Model, Input
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, TerminateOnNaN
 from keras.layers import Dense, Activation, Dropout, LSTM, Embedding
-from keras.optimizers import RMSprop
+from keras.optimizers import RMSprop, Adam
 from matplotlib import pyplot
+import pdb
 
 
-def encoder_decoder_model(sequences_matrix,Y_train):
-    num_decoder_tokens = 9
+def encoder_decoder_model(sequences_matrix,Y_train,Decoder_train):
+    num_decoder_tokens = 11
     max_words = 1000
     max_len = 150
-    latent_dim = 64
+    latent_dim = 11
     # Define an input sequence and process it.
     encoder_inputs = Input(shape=(None,))
     encoder_embedding_layer = Embedding(max_words, 50, input_length=max_len)(encoder_inputs)
@@ -19,30 +20,34 @@ def encoder_decoder_model(sequences_matrix,Y_train):
     # Set up the decoder, using `encoder_states` as initial state.
     decoder_inputs = Input(shape=(None, num_decoder_tokens))
     decoder_lstm_layer = LSTM(latent_dim, return_sequences=True)(decoder_inputs, initial_state=encoder_states)
-    layer = Dense(256)(decoder_lstm_layer)
-    layer = Activation('relu')(layer)
-    layer = Dropout(0.5)(layer)
-    decoder_outputs = Dense(num_decoder_tokens)(layer)
-    decoder_outputs = Activation('sigmoid')(decoder_outputs)
+    #layer = Dense(11)(decoder_lstm_layer)
+    #layer = Activation('relu')(layer)
+    #layer = Dropout(0.5)(layer)
+    #decoder_outputs = Dense(num_decoder_tokens)(decoder_lstm_layer)
+    decoder_outputs = Activation('tanh')(decoder_lstm_layer)
     # Define the model that will turn
     # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
+    #pdb.set_trace()
     model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
     # Compile & run training
     model.summary()
-    model.compile(loss='binary_crossentropy', optimizer=RMSprop(lr=0.0001), metrics=['accuracy'])
+    #model.compile(loss='binary_crossentropy', optimizer=RMSprop(lr=0.0001), metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer=Adam()) #, metrics=['accuracy'])
     # Note that `decoder_target_data` needs to be one-hot encoded,
     # rather than sequences of integers like `decoder_input_data`!
-    history = model.fit([sequences_matrix, Y_train], Y_train,
-                    batch_size=5 , epochs=30,
-                    validation_split=0.2, callbacks=[EarlyStopping(monitor='val_loss', min_delta=0.0001)])
+    #pdb.set_trace()
+    history = model.fit([sequences_matrix, Y_train], Decoder_train,
+                    batch_size=50, epochs=20,
+                    validation_split=0.2, callbacks=[TerminateOnNaN()]) #EarlyStopping(monitor='val_loss', min_delta=0.0001)])
 
+    #pyplot.plot(history.history['val_loss'])
     pyplot.plot(history.history['loss'])
-    pyplot.plot(history.history['val_loss'])
     pyplot.title('model train vs validation loss')
     pyplot.ylabel('loss')
     pyplot.xlabel('epoch')
     pyplot.legend(['train', 'validation'], loc='upper right')
-    pyplot.show()
+    pyplot.savefig("validation_loss_seq2seq.pdf")
+    pyplot.clf()
 
     encoder_model = Model(encoder_inputs, encoder_states)
     decoder_state_input_h = Input(shape=(latent_dim,))
