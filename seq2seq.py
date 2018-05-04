@@ -1,14 +1,37 @@
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 from encoder_decoder_model import  encoder_decoder_model
-from SplitData import SplitData
 import numpy as np
-from evaluateModel import evaluateModel
-import pdb
+from evaluateModel import evaluate
+import pandas as pd
 
-X_train, X_test, Y_train, Y_test, decoder_train, columns = SplitData()
+columns = ["Post", "Seek", "medical_condition", "medical_test", "medication", "insurance",
+           "diet", "exercise", "ask_for_advice", "other"]
 
-num_decoder_tokens = 11
+# df_train = pd.read_csv("Data/train.csv", delimiter="^")
+# df_test = pd.read_csv("Data/test.csv",delimiter ="^")
+
+df_train = pd.read_pickle("Data/train.pkl")
+df_test = pd.read_pickle("Data/test.pkl")
+Y_train = df_train["Frames_seq2seq"]
+Y_test = df_test["Frames_seq2seq"]
+X_train  = df_train["Post"]
+X_test  = df_test["Post"]
+
+Z_train = []
+W_train = []
+# pdb.set_trace()
+for line in Y_train:
+    print(line)
+    Z_train.append([[1.0] + [0.0] * len(columns), line])
+    W_train.append([line, [1.0] + [0.0] * len(columns)])
+Y_train = np.array(Z_train)
+decode_train = np.array(W_train)
+Z_test = []
+for line in Y_test:
+    Z_test.append([line, [0.0] * len(columns) + [1.0]])
+Y_test = np.array(Z_test)
+
 max_words = 1000
 max_len = 150
 tok = Tokenizer(num_words=max_words)
@@ -19,7 +42,8 @@ sequences_matrix = sequence.pad_sequences(sequences, maxlen=max_len)
 test_sequences = tok.texts_to_sequences(X_test)
 test_sequences_matrix = sequence.pad_sequences(test_sequences, maxlen=max_len)
 
-encoder_model,decoder_model = encoder_decoder_model(sequences_matrix,Y_train, decoder_train)
+num_decoder_tokens = 11
+encoder_model,decoder_model = encoder_decoder_model(sequences_matrix,Y_train, decode_train)
 
 def decode_sequence(input_seq):
     # Encode the input as
@@ -33,20 +57,8 @@ def decode_sequence(input_seq):
             [target_seq] + states_value)
     print("Result")
     print(output_tokens[0][0])
-    classes = []
-    #pdb.set_trace()
-    for i in range(9):
-        if output_tokens[0][0][i+1] >= 0.5:
-            classes.append(columns[i])
-    return classes
+    return output_tokens[0][0]
 
-
-def getGroundTruth(test_labels):
-    groundtruth = []
-    for i in range(9):
-        if (test_labels[0][0][i+1] == 1):
-            groundtruth.append(columns[i + 1])
-    return groundtruth
 
 
 pred = []
@@ -58,13 +70,7 @@ for seq_index in range(len(test_sequences_matrix)):
     input_seq = test_sequences_matrix[seq_index: seq_index + 1]
     classes = decode_sequence(input_seq)
     pred.append(classes)
-    print("actual values:" ,Y_test[seq_index:seq_index+1])
+    actual.append(Y_test[seq_index][0])
 
-    grndtruth = getGroundTruth(Y_test[seq_index:seq_index+1])
-    #pdb.set_trace()
- 
-    actual.append(grndtruth)
-
-
-evaluateModel(pred,actual)
+evaluate(pred,actual,columns)
 

@@ -1,7 +1,7 @@
 from keras import Model, Input
 from keras.callbacks import EarlyStopping, TerminateOnNaN
 from keras.layers import Dense, Activation, Dropout, LSTM, Embedding
-from keras.optimizers import RMSprop, Adam
+from keras.optimizers import *
 from matplotlib import pyplot
 import pdb
 
@@ -20,24 +20,24 @@ def encoder_decoder_model(sequences_matrix,Y_train,Decoder_train):
     # Set up the decoder, using `encoder_states` as initial state.
     decoder_inputs = Input(shape=(None, num_decoder_tokens))
     decoder_lstm_layer = LSTM(latent_dim, return_sequences=True)(decoder_inputs, initial_state=encoder_states)
-    #layer = Dense(11)(decoder_lstm_layer)
-    #layer = Activation('relu')(layer)
-    #layer = Dropout(0.5)(layer)
-    #decoder_outputs = Dense(num_decoder_tokens)(decoder_lstm_layer)
-    decoder_outputs = Activation('tanh')(decoder_lstm_layer)
+    layer = Dense(11)(decoder_lstm_layer)
+    # layer = Activation('relu')(layer)
+    layer = Dropout(0.5)(layer)
+    decoder_outputs = Dense(num_decoder_tokens)(layer)
+    decoder_outputs = Activation('tanh')(decoder_outputs)
     # Define the model that will turn
     # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
     #pdb.set_trace()
     model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
     # Compile & run training
     model.summary()
-    #model.compile(loss='binary_crossentropy', optimizer=RMSprop(lr=0.0001), metrics=['accuracy'])
-    model.compile(loss='binary_crossentropy', optimizer=Adam()) #, metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer=RMSprop(), metrics=['accuracy'])
+    # model.compile(loss='binary_crossentropy', optimizer=Adam(lr=0.001)) #, metrics=['accuracy'])
     # Note that `decoder_target_data` needs to be one-hot encoded,
     # rather than sequences of integers like `decoder_input_data`!
     #pdb.set_trace()
     history = model.fit([sequences_matrix, Y_train], Decoder_train,
-                    batch_size=50, epochs=20,
+                    batch_size=2, epochs=20,
                     validation_split=0.2, callbacks=[TerminateOnNaN()]) #EarlyStopping(monitor='val_loss', min_delta=0.0001)])
 
     #pyplot.plot(history.history['val_loss'])

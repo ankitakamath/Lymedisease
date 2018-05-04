@@ -1,3 +1,26 @@
+def getGroundTruth(test_labels,columns):
+    groundtruth = []
+    for i in range(9):
+        if (test_labels[i] == 1):
+            groundtruth.append(columns[i + 1])
+    return groundtruth
+
+output = []
+actual = []
+
+def evaluate(pred,Y_test,columns):
+    for i in range(len(Y_test)):
+        print(pred[i])
+        print(Y_test[i])
+        actual.append(getGroundTruth(Y_test[i],columns))
+        classes = []
+        for j in range(9):
+            if pred[i][j] >= 0.5:
+                classes.append(columns[j + 1])
+        output.append(classes)
+
+    evaluateModel(output,actual)
+
 def calculateMetrics(output,groundtruth,label):
     true_positives = 0.0
     true_negatives = 0.0
